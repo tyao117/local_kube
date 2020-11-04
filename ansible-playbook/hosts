@@ -1,0 +1,4 @@
+[kubecluster]
+kubemaster.local
+kubeworker1.local
+kubeworker2.local
