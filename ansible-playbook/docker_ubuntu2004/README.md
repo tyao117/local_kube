@@ -38,6 +38,7 @@ default_container_image: ubuntu
 
 ```command
 ansible-playbook -l [target] -i [inventory file] -u [remote user] playbook.yml
+ansible-playbook -i ../hosts playbook.yml
 ```
 
 For more information on how to run this Ansible setup, please check this guide: [How to Use Ansible to Install and Set Up Docker on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-18-04).
