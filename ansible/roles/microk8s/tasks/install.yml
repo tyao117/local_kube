@@ -45,6 +45,7 @@
   snap:
     name: microk8s
     classic: yes
+    channel: "{{ microk8s_version }}"
 
 - name: Add User to the microk8s group
   become: yes
@@ -64,7 +65,7 @@
   become: yes
   template:
     src: "docker-daemon.json"
-    dest: "/var/snap/microk8s/current/args/docker-daemon.json"
+    dest: "/etc/docker/daemon.json"
     owner: "root"
     group: "root"
 
@@ -91,8 +92,8 @@
     line: "ulimit -n 65536"
     state: present
 
-- name: Add Insecure Registries
-  import_tasks: add-insecure-registries.yml
+#- name: Add Insecure Registries
+#  import_tasks: add-insecure-registries.yml
 
 - name: Stop Microk8s
   shell: microk8s.stop
@@ -140,7 +141,7 @@
     executable: /bin/bash
 
 - name: Enable K8s Dashboard
-  shell: "/snap/bin/microk8s.enable dashboard"
+  shell: ".enable dashboard"
   when: k8s_dashboard|default(False)|bool == True
   args:
     executable: /bin/bash

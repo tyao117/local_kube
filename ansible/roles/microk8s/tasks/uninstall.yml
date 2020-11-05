@@ -1,8 +1,8 @@
-- name: enable microk8s
-  become: yes
-  shell: "snap enable microk8s"
-  args:
-    executable: /bin/bash
+#- name: enable microk8s
+#  become: yes
+#  shell: "snap enable microk8s"
+#  args:
+#    executable: /bin/bash
 
 - name: uninstall microk8s
   become: yes
