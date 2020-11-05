@@ -54,6 +54,11 @@
     groups: microk8s
     append: yes
 
+- name: Microk8s status
+  shell: microk8s.status --wait-ready
+  args:
+    executable: /bin/bash
+
 - name: Change the owner of the .kube folder
   become: yes
   file:
@@ -69,10 +74,12 @@
     owner: "root"
     group: "root"
 
-- name: Microk8s status
-  shell: microk8s.status --wait-ready
-  args:
-    executable: /bin/bash
+- name: Restart the docker daemon for good measure
+  become: yes
+  systemd:
+      state: restarted
+      daemon_reload: yes
+      name: docker
 
 - name: Allow Privileged for Kubelet (needed by Elasticsearch Helm chart)
   lineinfile:
