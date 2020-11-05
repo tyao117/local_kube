@@ -1,0 +1,6 @@
+- hosts: kube_cluster
+  gather_facts: yes
+  tasks:
+      - include_role:
+            name: microk8s
+            tasks_from: install

@@ -1,4 +1,12 @@
 ---
-- name: Simple A record (IPV4 address) lookup for kubemaster
-  ansible.builtin.debug:
-    msg: "{{ lookup('community.general.dig', 'kubemaster')}}"
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Simple A record (IPV4 address) lookup for kubemaster
+      set_fact:
+        ip_addr: "{{ lookup('dig', 'kubemaster')}}"
+
+    - name: Look at the DNS name
+      ansible.builtin.debug:
+        msg: "{{ ip_addr }}"

@@ -1,24 +1,15 @@
-- name: Simple A record (IPV4 address) lookup for kubemaster
-  set_fact:
-    kubemaster: "{{ lookup('dig', 'kubemaster')}}"
-
 - name: Update apt cache
-  become: yes
-  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+  raw: apt-get -y update
 
 - name: If needed, install Python
-  become: yes
-  apt:
-    pkg:
-     - python3-dev
-     - python3-pip
+  raw: apt-get -y install python python-pip
 
 - name: Install base dependencies
-  become: yes
-  apt:
-    name:
+  apt: 
+    name: 
       - snapd
-    state: present
+    state: present 
+  become: yes
 
 - name: Check is ufw installed
   shell: command -v ufw >/dev/null 2>&1
@@ -31,7 +22,6 @@
   when: is_ufw_exist.rc == 0
 
 - name: Set ip forwarding
-  become: yes
   sysctl:
     name: net.ipv4.ip_forward
     value: 1
@@ -45,23 +35,9 @@
   snap:
     name: microk8s
     classic: yes
-
-- name: Add User to the microk8s group
-  become: yes
-  user:
-    name: "{{ ansible_user }}"
-    groups: microk8s
-    append: yes
-
-- name: Change the owner of the .kube folder
-  become: yes
-  file:
-    owner: "{{ ansible_user }}"
-    recurse: yes
-    path: ~/.kube
+    channel: "{{ microk8s_version }}"
 
 - name: Update Microk8s docker-daemon.json file
-  become: yes
   template:
     src: "docker-daemon.json"
     dest: "/var/snap/microk8s/current/args/docker-daemon.json"
@@ -69,7 +45,7 @@
     group: "root"
 
 - name: Microk8s status
-  shell: microk8s.status --wait-ready
+  shell: source /etc/profile.d/apps-bin-path.sh && microk8s.status --wait-ready
   args:
     executable: /bin/bash
 
@@ -95,52 +71,52 @@
   import_tasks: add-insecure-registries.yml
 
 - name: Stop Microk8s
-  shell: microk8s.stop
+  shell: source /etc/profile.d/apps-bin-path.sh && microk8s.stop
   args:
     executable: /bin/bash
 
 - name: Start Microk8s
-  shell: microk8s.start
+  shell: source /etc/profile.d/apps-bin-path.sh && microk8s.start
   args:
     executable: /bin/bash
 
 - name: Microk8s status
-  shell: microk8s.status --wait-ready
+  shell: source /etc/profile.d/apps-bin-path.sh && microk8s.status --wait-ready
   args:
     executable: /bin/bash
 
 - name: Microk8s inspect
-  shell: microk8s.inspect
+  shell: source /etc/profile.d/apps-bin-path.sh && microk8s.inspect
   args:
     executable: /bin/bash
 
-  # - name: Alias kubectl
-  #   shell: " snap alias microk8s.kubectl kubectl"
-  #   args:
-  #     executable: /bin/bash
+- name: Alias kubectl
+  shell: "source /etc/profile.d/apps-bin-path.sh && snap alias microk8s.kubectl kubectl"
+  args:
+    executable: /bin/bash
 
-# - name: Alias docker
-#   shell: " snap alias microk8s.docker docker"
-#   args:
-#     executable: /bin/bash
+- name: Alias docker
+  shell: "source /etc/profile.d/apps-bin-path.sh && snap alias microk8s.docker docker"
+  args:
+    executable: /bin/bash
 
 - name: Enable dns
-  shell: "microk8s.enable dns"
+  shell: "source /etc/profile.d/apps-bin-path.sh && microk8s.enable dns"
   args:
     executable: /bin/bash
 
 - name: Enable ingress
-  shell: "microk8s.enable ingress"
+  shell: "source /etc/profile.d/apps-bin-path.sh && microk8s.enable ingress"
   args:
     executable: /bin/bash
 
 - name: Enable storage
-  shell: "microk8s.enable storage"
+  shell: "source /etc/profile.d/apps-bin-path.sh && microk8s.enable storage"
   args:
     executable: /bin/bash
 
 - name: Enable K8s Dashboard
-  shell: "/snap/bin/microk8s.enable dashboard"
+  shell: "source /etc/profile.d/apps-bin-path.sh && /snap/bin/microk8s.enable dashboard"
   when: k8s_dashboard|default(False)|bool == True
   args:
     executable: /bin/bash
