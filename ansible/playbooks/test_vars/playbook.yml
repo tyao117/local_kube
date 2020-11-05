@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Looking at the var
+      set_fact:
+        user_name: "{{ ansible_user }}"
+
+    - name: Look at the username
+      ansible.builtin.debug:
+        msg: "{{ user_name }}"
