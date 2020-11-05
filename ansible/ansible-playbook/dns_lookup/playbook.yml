@@ -1,0 +1,3 @@
+- name: Simple A record (IPV4 address) lookup for example.com
+  ansible.builtin.debug:
+    msg: "{{ lookup('community.general.dig', 'kubemaster')}}"
